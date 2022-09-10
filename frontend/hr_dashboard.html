@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Dashboard</title>
+    <!-- <link rel="stylesheet" href="./css/index.css" />
+    <script src="./hr_dashboard.js" defer></script> -->
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+        }
+
+        body {
+            margin: 0px;
+            font-family: Helvetica;
+            -webkit-font-smoothing: antialiased;
+            background: rgba(71, 147, 227, 1);
+        }
+
+        /* Navbar CSS */
+        .nav {
+            height: 50px;
+            width: 100%;
+            background-color: #324960;
+            position: relative;
+        }
+
+        .nav>.nav-header {
+            display: inline;
+        }
+
+        .nav>.nav-header>.nav-title {
+            display: inline-block;
+            font-size: 20px;
+            color: #fff;
+            padding: 13px 10px 13px 10px;
+        }
+
+        .nav>.nav-links {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 30%;
+            height: 50px;
+            float: right;
+            font-size: 15px;
+        }
+
+        .nav>.nav-links>a {
+            display: inline-block;
+            padding: 16px 10px 16px 10px;
+            text-decoration: none;
+            color: #efefef;
+        }
+
+        .nav>.nav-links>a:hover {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        .nav>#nav-check {
+            display: none;
+        }
+
+        @media (max-width:600px) {
+            .nav>.nav-btn {
+                display: inline-block;
+                position: absolute;
+                right: 0px;
+                top: 0px;
+            }
+
+            .nav>.nav-btn>label {
+                display: inline-block;
+                width: 50px;
+                height: 50px;
+                padding: 13px;
+            }
+
+            .nav>.nav-btn>label:hover,
+            .nav #nav-check:checked~.nav-btn>label {
+                background-color: rgba(0, 0, 0, 0.3);
+            }
+
+            .nav>.nav-btn>label>span {
+                display: block;
+                width: 25px;
+                height: 10px;
+                border-top: 2px solid #eee;
+            }
+
+            .nav>.nav-links {
+                position: absolute;
+                display: block;
+                width: 100%;
+                background-color: #333;
+                height: 0px;
+                transition: all 0.3s ease-in;
+                overflow-y: hidden;
+                top: 50px;
+                left: 0px;
+            }
+
+            .nav>.nav-links>a {
+                display: block;
+                width: 100%;
+            }
+
+            .nav>#nav-check:not(:checked)~.nav-links {
+                height: 0px;
+            }
+
+            .nav>#nav-check:checked~.nav-links {
+                height: calc(100vh - 50px);
+                overflow-y: auto;
+            }
+        }
+
+        /* Table CSS */
+        h2 {
+            text-align: center;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            padding: 30px 0;
+        }
+
+        /* Table Styles */
+
+        .table-wrapper {
+            margin: 10px 70px 70px;
+            box-shadow: 0px 35px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        .fl-table {
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: normal;
+            border: none;
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 100%;
+            white-space: nowrap;
+            background-color: white;
+        }
+
+        .fl-table td,
+        .fl-table th {
+            text-align: center;
+            padding: 8px;
+        }
+
+        .fl-table td {
+            border-right: 1px solid #f8f8f8;
+            font-size: 12px;
+        }
+
+        .fl-table thead th {
+            color: #ffffff;
+            background: #4FC3A1;
+        }
+
+
+        .fl-table thead th:nth-child(odd) {
+            color: #ffffff;
+            background: #324960;
+        }
+
+        .fl-table tr:nth-child(even) {
+            background: #F8F8F8;
+        }
+
+        /* Responsive */
+
+        @media (max-width: 767px) {
+            .fl-table {
+                display: block;
+                width: 100%;
+            }
+
+            .table-wrapper:before {
+                content: "Scroll horizontally >";
+                display: block;
+                text-align: right;
+                font-size: 11px;
+                color: white;
+                padding: 0 0 10px;
+            }
+
+            .fl-table thead,
+            .fl-table tbody,
+            .fl-table thead th {
+                display: block;
+            }
+
+            .fl-table thead th:last-child {
+                border-bottom: none;
+            }
+
+            .fl-table thead {
+                float: left;
+            }
+
+            .fl-table tbody {
+                width: auto;
+                position: relative;
+                overflow-x: auto;
+            }
+
+            .fl-table td,
+            .fl-table th {
+                padding: 20px .625em .625em .625em;
+                height: 60px;
+                vertical-align: middle;
+                box-sizing: border-box;
+                overflow-x: hidden;
+                overflow-y: auto;
+                width: 120px;
+                font-size: 13px;
+                text-overflow: ellipsis;
+            }
+
+            .fl-table thead th {
+                text-align: left;
+                border-bottom: 1px solid #f7f7f9;
+            }
+
+            .fl-table tbody tr {
+                display: table-cell;
+            }
+
+            .fl-table tbody tr:nth-child(odd) {
+                background: none;
+            }
+
+            .fl-table tr:nth-child(even) {
+                background: transparent;
+            }
+
+            .fl-table tr td:nth-child(odd) {
+                background: #F8F8F8;
+                border-right: 1px solid #E6E4E4;
+            }
+
+            .fl-table tr td:nth-child(even) {
+                border-right: 1px solid #E6E4E4;
+            }
+
+            .fl-table tbody td {
+                display: block;
+                text-align: center;
+            }
+        }
+
+
+        .button-18 {
+            align-items: center;
+            background-color: #0A66C2;
+            border: 0;
+            border-radius: 100px;
+            box-sizing: border-box;
+            color: #ffffff;
+            cursor: pointer;
+            display: inline-flex;
+            font-family: -apple-system, system-ui, system-ui, "Segoe UI", Roboto, "Helvetica Neue", "Fira Sans", Ubuntu, Oxygen, "Oxygen Sans", Cantarell, "Droid Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Lucida Grande", Helvetica, Arial, sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            justify-content: center;
+            line-height: 20px;
+            max-width: 480px;
+            min-height: 30px;
+            min-width: 0px;
+            overflow: hidden;
+            padding: 0px;
+            padding-left: 20px;
+            padding-right: 20px;
+            text-align: center;
+            touch-action: manipulation;
+            transition: background-color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, box-shadow 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+            user-select: none;
+            -webkit-user-select: none;
+            vertical-align: middle;
+        }
+
+        .button-18:hover,
+        .button-18:focus {
+            background-color: #16437E;
+            color: #ffffff;
+        }
+
+        .button-18:active {
+            background: #09223b;
+            color: rgb(255, 255, 255, .7);
+        }
+
+        .button-18:disabled {
+            cursor: not-allowed;
+            background: rgba(0, 0, 0, .08);
+            color: rgba(0, 0, 0, .3);
+        }
+
+        /* Modal CSS */
+        .modal {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(1.1);
+            transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 35%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 1rem 1.5rem;
+            width: 50rem;
+            border-radius: 0.5rem;
+        }
+
+        .close-button {
+            float: right;
+            width: 1.5rem;
+            line-height: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 0.25rem;
+            background-color: lightgray;
+        }
+
+        .close-button:hover {
+            background-color: darkgray;
+        }
+
+        .show-modal {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1.0);
+            transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
+        }
+
+        /*Input Fields*/
+        /** BEGIN: Non Openmrs CSS **/
+        div.input-container {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-around;
+            margin-top: 30px;
+            border: 1px solid whitesmoke;
+            padding: 21px;
+            border-radius: 4px;
+        }
+
+        h4.title {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        :root {
+            --omrs-color-ink-medium-contrast: rgba(19, 19, 21, 0.6);
+            --omrs-color-interaction: #1e4bd1;
+
+        }
+
+        /** END: Non Openmrs CSS **/
+        div.omrs-input-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+            width: 20.4375rem;
+        }
+
+        /* Input*/
+        .omrs-input-underlined>input {
+            border: none;
+            border-bottom: 0.125rem solid var(--omrs-color-ink-medium-contrast);
+            width: 100%;
+            height: 3.5rem;
+            font-size: 1.0625rem;
+            padding-left: 0.875rem;
+            line-height: 147.6%;
+            padding-top: 0.825rem;
+        }
+
+        .omrs-input-underlined>input:focus {
+            outline: none;
+        }
+
+        .omrs-input-underlined>.omrs-input-label {
+            position: absolute;
+            top: 0.4rem;
+            left: 0.875rem;
+            line-height: 147.6%;
+            color: var(--omrs-color-ink-medium-contrast);
+            transition: top .2s;
+        }
+
+
+        .omrs-input-underlined>input:hover {
+            border-color: var(--omrs-color-ink-high-contrast);
+        }
+
+        .omrs-input-underlined>input:focus+.omrs-input-label,
+        .omrs-input-underlined>input:valid+.omrs-input-label {
+            top: 0;
+            font-size: 0.8rem;
+        }
+
+        .omrs-input-underlined>input:focus {
+            border-color: var(--omrs-color-interaction);
+        }
+
+        /* Toggle Switch */
+        .attendance-toggle {
+            display: flex;
+        }
+
+        .attendance-toggle>h4 {
+            color: #efefef;
+        }
+
+        .switch-toggle {
+            height: 40px;
+        }
+
+        .switch-toggle input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            z-index: -2;
+        }
+
+        .switch-toggle input[type="checkbox"]+label {
+            position: relative;
+            display: inline-block;
+            width: 100px;
+            height: 40px;
+            border-radius: 20px;
+            margin: 0;
+            cursor: pointer;
+            box-shadow: inset -8px -8px 15px #1e2b39,
+                inset 10px 10px 10px rgba(0, 0, 0, .25);
+
+        }
+
+        .switch-toggle input[type="checkbox"]+label::before {
+            position: absolute;
+            content: 'Absent';
+            font-size: 10px;
+            text-align: center;
+            line-height: 25px;
+            top: 8px;
+            left: 8px;
+            width: 45px;
+            height: 25px;
+            border-radius: 20px;
+            background-color: #d1dad3;
+            box-shadow: -3px -3px 5px #1e2b39,
+                3px 3px 5px rgba(0, 0, 0, .25);
+            transition: .3s ease-in-out;
+        }
+
+        .switch-toggle input[type="checkbox"]:checked+label::before {
+            left: 50%;
+            content: 'Present';
+            color: #fff;
+            background-color: #00b33c;
+            box-shadow: -3px -3px 5px #1e2b39,
+                3px 3px 5px #00b33c;
+        }
+
+        /* Select CSS */
+        select {
+            appearance: none;
+            outline: 0;
+            border: 2px solid #34495e;
+            box-shadow: none;
+            flex: 1;
+            padding: 0 1em;
+            background-image: none;
+            cursor: pointer;
+        }
+
+        select::-ms-expand {
+            display: none;
+        }
+
+        .select {
+            position: relative;
+            display: flex;
+            width: 20em;
+            height: 3em;
+            border-radius: .25em;
+            overflow: hidden;
+        }
+
+        .select::after {
+            content: '\25BC';
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 1em;
+            transition: .25s all ease;
+            pointer-events: none;
+        }
+
+        .select:hover::after {
+            color: #2c3e50;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="nav">
+        <input type="checkbox" id="nav-check">
+        <div class="nav-header">
+            <div class="nav-title">
+                HR Management
+            </div>
+        </div>
+
+        <div class="nav-links">
+            <h4 style="margin-right: -50px; color: #fff;">Attendance</h4>
+            <div class="switch-toggle">
+                <input type="checkbox" id="attendance" value="off" onchange="attendance()">
+                <label for="attendance"></label>
+            </div>
+            <a href="#" onclick="logout()">Logout</a>
+        </div>
+    </div>
+    <h2>Employee Table</h2>
+    <div class="table-wrapper">
+        <table class="fl-table">
+            <thead>
+                <tr>
+                    <th>Employee First Name</th>
+                    <th>Employee Last Name</th>
+                    <th>Email</th>
+                    <th>Contact</th>
+                    <th>Attendance</th>
+                    <th>Task</th>
+                </tr>
+            </thead>
+            <tbody id="empData">
+
+            <tbody>
+        </table>
+    </div>
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <span class="close-button" id="taskClose">&times;</span>
+            <h2 style="color:black; padding: 0%;">Task Table</h2>
+            <table class="fl-table" style="border: 1px solid grey; margin-bottom: 20px">
+                <thead>
+                    <tr>
+                        <th>Task Name</th>
+                        <th>Deadline</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="taskData">
+
+                <tbody>
+            </table>
+            <button class='button-18' role='button' onclick='toggleAssignTaskModal()'>+ Task</button>
+        </div>
+    </div>
+    <div class="modal" id="assignTaskModal">
+        <div class="modal-content" style="width: 50%">
+            <span class="close-button" id="assignTaskClose">&times;</span>
+            <h2 style="color:black; padding: 0%;">Assign Task</h2>
+            <div class="input-container">
+                <div>
+                    <form>
+                        <input type="hidden" value="" id="emp-id">
+                        <div class="omrs-input-group">
+                            <label class="omrs-input-underlined">
+                                <input type="text" id="task-name" required>
+                                <span class="omrs-input-label">Task Name</span>
+                            </label>
+                        </div>
+                        <div class="omrs-input-group">
+                            <label class="omrs-input-underlined">
+                                <input type="date" id="task-deadline" required>
+                                <span class="omrs-input-label">Deadline</span>
+                            </label>
+                        </div>
+                    </form>
+                    <button class='button-18' role='button' onclick='addTask()'>Create & Assign</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        const url = "https://test-hr-mariyus.herokuapp.com";
+        fetch(url + "/attendance", {
+            method: "GET",
+        })
+            .then((response) => {
+                return response.json();
+            })
+            .then((res) => {
+                fetch(url + "/employee", {
+                    method: "GET",
+                })
+                    .then((response2) => {
+                        return response2.json();
+                    })
+                    .then((res2) => {
+                        var tableData = "";
+                        res2.forEach((emp) => {
+                            var attend =
+                                "<span style='font-weight: bold; color: red'>Absent</span>";
+
+                            if (res.indexOf(emp._id) != -1) {
+                                attend =
+                                    "<span style='font-weight: bold; color: #00cd00'>Present</span>";
+                            }
+
+                            if (!(emp.role === "HR" || emp.role === "admin")) {
+                                tableData +=
+                                    "<tr><td>" +
+                                    emp.first_name +
+                                    "</td><td>" +
+                                    emp.last_name +
+                                    "</td><td>" +
+                                    emp.email +
+                                    "</td><td>" +
+                                    emp.contact +
+                                    "</td><td>" +
+                                    attend +
+                                    "</td><td><button class='button-18' role='button' onclick='getTask(`" +
+                                    emp._id +
+                                    "`)'>Task</button></td></tr>";
+                            }
+                        });
+                        document.getElementById("empData").innerHTML = tableData;
+                    });
+            });
+
+        function getTask(empId) {
+            fetch(url + "/emp_task", {
+                method: "POST",
+                headers: {
+                    Accept: "application.json",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ employee_id: empId }),
+            })
+                .then((response) => {
+                    return response.json();
+                })
+                .then((res) => {
+                    var tableData = "";
+                    res.forEach((task) => {
+                        tableData +=
+                            "<tr><td>" +
+                            task.task_name +
+                            "</td><td>" +
+                            task.deadline +
+                            "</td><td>" +
+                            task.status +
+                            "</td><td><button class='button-18' role='button' style='background-color: red' onclick='deleteTask(`" +
+                            task._id +
+                            "`)'>Delete</button></td></tr>";
+                    });
+                    document.getElementById("taskData").innerHTML = tableData;
+                    document.getElementById("emp-id").value = empId;
+                    toggleTaskModal();
+                });
+        }
+
+        function deleteTask(id) {
+            fetch(url + "/task/" + id, {
+                method: "DELETE",
+            })
+                .then((response) => {
+                    return response.json();
+                })
+                .then((res) => {
+                    const empId = document.getElementById("emp-id").value;
+                    getTask(empId);
+                });
+        }
+
+        function addTask() {
+            const empId = document.getElementById("emp-id").value;
+            const task = document.getElementById("task-name").value;
+            const deadline = document.getElementById("task-deadline").value;
+            if (task !== "" && deadline !== "") {
+                fetch(url + "/add_task", {
+                    method: "POST",
+                    headers: {
+                        Accept: "application.json",
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        task_name: task,
+                        deadline: deadline,
+                        employee_id: empId,
+                    }),
+                })
+                    .then((response) => {
+                        return response.json();
+                    })
+                    .then((res) => {
+                        toggleAssignTaskModal();
+                        const empId = document.getElementById("emp-id").value;
+                        getTask(empId);
+                    });
+            }
+        }
+
+        const taskModal = document.getElementById("taskModal");
+        const assignTaskModal = document.getElementById("assignTaskModal");
+        const taskClose = document.getElementById("taskClose");
+        const assignTaskClose = document.getElementById("assignTaskClose");
+
+        function toggleTaskModal() {
+            taskModal.classList.toggle("show-modal");
+        }
+
+        function toggleAssignTaskModal() {
+            assignTaskModal.classList.toggle("show-modal");
+        }
+
+        function windowOnClick(event) {
+            if (event.target === taskModal) {
+                toggleTaskModal();
+            } else if (event.target === assignTaskModal) {
+                toggleAssignTaskModal();
+            }
+        }
+
+        taskClose.addEventListener("click", toggleTaskModal);
+        assignTaskClose.addEventListener("click", toggleAssignTaskModal);
+        window.addEventListener("click", windowOnClick);
+
+        function attendance() {
+            const attendance = document.getElementById("attendance").value;
+            document.getElementById("attendance").value =
+                attendance === "on" ? "off" : "on";
+
+            var endPoint = "";
+            var payload = {};
+            if (attendance === "off") {
+                endPoint = "/attendance_check_in";
+                payload = {
+                    employee_id: localStorage.getItem("id"),
+                    employee_name: localStorage.getItem("name"),
+                };
+            } else {
+                endPoint = "/attendance_check_out";
+                payload = {
+                    id: localStorage.getItem("attendanceId"),
+                };
+            }
+
+            fetch(`${url + endPoint}`, {
+                method: "POST",
+                headers: {
+                    Accept: "application.json",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            })
+                .then((response) => {
+                    return response.json();
+                })
+                .then((res) => {
+                    if (endPoint === "/attendance_check_in") {
+                        localStorage.setItem("attendanceId", res._id);
+                        alert("Attendance Mark.");
+                    }
+                });
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.replace("/");
+        }
+    </script>
+</body>
+
+</html>
